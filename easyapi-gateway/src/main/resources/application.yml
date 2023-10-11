@@ -1,0 +1,35 @@
+server:
+  port: 8090
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddResponseHeader=source, weiwei
+      routes:
+        - id: api_route
+          uri: http://localhost:8123
+          predicates:
+            - Path=/api/**
+          filters:
+            - RequestHeaderSize=1000B   #请求限制，请求头大小不超过 1000B
+            - RemoveResponseHeader=X-Response-Foo   #信息脱敏
+      httpclient: # 设置超时时间 10s
+        connect-timeout: 1000
+        response-timeout: 10s
+  redis:
+    host: 192.168.200.128  # 虚拟机地址
+#    host: localhost  #服务器地址
+    port: 6379
+    database: 2
+    password: zhang # 设置密码
+
+
+dubbo:
+  application:
+    name: dubbo-springboot-consumer
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848
